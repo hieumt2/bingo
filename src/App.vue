@@ -2,12 +2,13 @@
   <div id="app">
     <div class="start">
       <button v-on:click="addTicket">Add new</button>
-      <button v-on:click="clearTicket">Clear Ticket</button>
+      <button v-on:click="clearTickets">Clear Tickets</button>
       <div>
         <button
           v-for="(ticket, index) in tickets"
           :key="index"
           v-on:click="choseTicket(index)"
+          :class="{'active': activeTicket === index}"
         >{{ index + 1 }}</button>
       </div>
       <div>
@@ -207,12 +208,14 @@ export default {
         }
       }
     },
-    clearTicket() {
+    clearTickets() {
       this.tickets = [];
+      this.activeTicket = -1;
       localStorage.tickets = JSON.stringify(this.tickets);
     },
     deleteTicket(index) {
       this.tickets.splice(index, 1);
+      this.activeTicket = -1;
       localStorage.tickets = JSON.stringify(this.tickets);
     },
     handleEditNumber(e) {
@@ -224,7 +227,7 @@ export default {
           parseInt(idSet[2]),
           parseInt(e.target.value)
         );
-        e.target.value = ""
+        e.target.value = "";
         localStorage.tickets = JSON.stringify(this.tickets);
       }
     }
@@ -247,6 +250,7 @@ export default {
 
 .tickets {
   display: flex;
+  flex-wrap: wrap;
 }
 
 td {
@@ -272,5 +276,11 @@ table:first {
 
 .inlineEdit {
   width: 20px;
+}
+.ticket {
+  margin-top: 10px;
+}
+.active {
+  background: yellow;
 }
 </style>
