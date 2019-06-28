@@ -2,6 +2,7 @@
   <div id="app">
     <div class="start">
       <button v-on:click="addTicket">Add new</button>
+      <button v-on:click="clearTicket">Clear Ticket</button>
       <div>
         <button
           v-for="(ticket, index) in tickets"
@@ -18,16 +19,26 @@
         >
       </div>
     </div>
-    <div class="ticket">
-      <table v-for="(ticket, index) in tickets" :key="'table' + index">
-        <tr v-for="(row, rowIndex) in ticket" :key="'row' + rowIndex">
-          <td
-            v-for="(data, dataIndex) in row"
-            :key="'data' + dataIndex"
-            :ref="index.toString() +rowIndex.toString() + dataIndex.toString()"
-          >{{ data }}</td>
-        </tr>
-      </table>
+    <div class="tickets">
+      <div class="ticket" v-for="(ticket, index) in tickets" :key="'table' + index">
+        <button v-on:click="deleteTicket(index)">Delete ticket {{index + 1}}</button>
+        <table>
+          <tr v-for="(row, rowIndex) in ticket" :key="'row' + rowIndex">
+            <td
+              v-for="(data, dataIndex) in row"
+              :key="'data' + dataIndex"
+              :ref="index.toString() +rowIndex.toString() + dataIndex.toString()"
+            >
+              <span>{{data}}</span>
+              <input
+                class="inlineEdit"
+                v-bind:data-id="index+':'+rowIndex+':'+dataIndex"
+                v-on:keyup="handleEditNumber"
+              >
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
     <div class="result" v-if="tickets.length > 0">
       <div>
@@ -47,6 +58,11 @@
 <script>
 export default {
   name: "app",
+  mounted() {
+    if (localStorage.tickets) {
+      this.tickets = JSON.parse(localStorage.tickets);
+    }
+  },
   data() {
     return {
       tickets: [],
@@ -76,12 +92,14 @@ export default {
           activeTicket.push([]);
           activeTicket[0].push(parseInt(this.currentInput));
           this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
 
         if (activeTicket.length === 1 && activeTicket[0].length < 5) {
           activeTicket[0].push(parseInt(this.currentInput));
           this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
 
@@ -89,12 +107,14 @@ export default {
           activeTicket.push([]);
           activeTicket[1].push(parseInt(this.currentInput));
           this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
 
         if (activeTicket.length === 2 && activeTicket[1].length < 5) {
           activeTicket[1].push(parseInt(this.currentInput));
           this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
 
@@ -102,12 +122,14 @@ export default {
           activeTicket.push([]);
           activeTicket[2].push(parseInt(this.currentInput));
           this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
 
         if (activeTicket.length === 3 && activeTicket[2].length < 5) {
           activeTicket[2].push(parseInt(this.currentInput));
           this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
 
@@ -115,12 +137,14 @@ export default {
           activeTicket.push([]);
           activeTicket[3].push(parseInt(this.currentInput));
           this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
 
         if (activeTicket.length === 4 && activeTicket[3].length < 5) {
           activeTicket[3].push(parseInt(this.currentInput));
           this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
 
@@ -128,17 +152,25 @@ export default {
           activeTicket.push([]);
           activeTicket[4].push(parseInt(this.currentInput));
           this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
 
         if (activeTicket.length === 5 && activeTicket[4].length < 5) {
           activeTicket[4].push(parseInt(this.currentInput));
           this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
 
         if (activeTicket.length === 5 && activeTicket[2].length === 5) {
           this.addTicket();
+          this.tickets[this.tickets.length - 1].push([]);
+          this.tickets[this.tickets.length - 1][0].push(
+            parseInt(this.currentInput)
+          );
+          this.currentInput = "";
+          localStorage.tickets = JSON.stringify(this.tickets);
           return;
         }
       }
@@ -174,6 +206,27 @@ export default {
           }
         }
       }
+    },
+    clearTicket() {
+      this.tickets = [];
+      localStorage.tickets = JSON.stringify(this.tickets);
+    },
+    deleteTicket(index) {
+      this.tickets.splice(index, 1);
+      localStorage.tickets = JSON.stringify(this.tickets);
+    },
+    handleEditNumber(e) {
+      if (e.keyCode === 13) {
+        if (isNaN(parseInt(e.target.value))) return;
+        const idSet = e.target.dataset.id.split(":");
+        this.$set(
+          this.tickets[parseInt(idSet[0])][parseInt(idSet[1])],
+          parseInt(idSet[2]),
+          parseInt(e.target.value)
+        );
+        e.target.value = ""
+        localStorage.tickets = JSON.stringify(this.tickets);
+      }
     }
   }
 };
@@ -192,7 +245,7 @@ export default {
   margin-top: 20px;
 }
 
-.ticket {
+.tickets {
   display: flex;
 }
 
@@ -200,8 +253,8 @@ td {
   display: inline-block;
   padding: 20px;
   border: solid 1px #ccc;
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   margin-right: 2px;
 }
 
@@ -215,5 +268,9 @@ table:first {
 
 .result {
   margin: 2px;
+}
+
+.inlineEdit {
+  width: 20px;
 }
 </style>
