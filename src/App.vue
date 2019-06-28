@@ -2,12 +2,21 @@
   <div id="app">
     <div class="start">
       <button v-on:click="addTicket">Add new</button>
-      <button
-        v-for="(ticket, index) in tickets"
-        :key="index"
-        v-on:click="choseTicket(index)"
-      >{{ index + 1 }}</button>
-      <input v-if="this.activeTicket !== -1" v-model="currentInput" v-on:keyup="handleInputNumber">
+      <div>
+        <button
+          v-for="(ticket, index) in tickets"
+          :key="index"
+          v-on:click="choseTicket(index)"
+        >{{ index + 1 }}</button>
+      </div>
+      <div>
+        <input
+          v-if="this.activeTicket !== -1"
+          v-model="currentInput"
+          :ref="'inputNumber'"
+          v-on:keyup="handleInputNumber"
+        >
+      </div>
     </div>
     <div class="ticket">
       <table v-for="(ticket, index) in tickets" :key="'table' + index">
@@ -21,9 +30,13 @@
       </table>
     </div>
     <div class="result" v-if="tickets.length > 0">
-      <span>Result:</span>
-      <span v-for="(result, index) in results" :key="index + 200">{{ result }}</span>
-      <input v-model="currentResultInput" v-on:keyup="handleResultInput">
+      <div>
+        <span>Result:</span>
+        <span v-for="(result, index) in results" :key="index + 200">{{ result }}</span>
+      </div>
+      <div>
+        <input v-model="currentResultInput" v-on:keyup="handleResultInput">
+      </div>
     </div>
   </div>
 </template>
@@ -43,6 +56,11 @@ export default {
   methods: {
     addTicket() {
       this.tickets.push([]);
+      this.activeTicket = this.tickets.length - 1;
+      this.$nextTick(() => {
+         this.$refs['inputNumber'].focus();
+      });
+     
     },
     choseTicket(index) {
       this.activeTicket = index;
@@ -118,6 +136,7 @@ export default {
         }
 
         if (activeTicket.length === 5 && activeTicket[2].length === 5) {
+          this.addTicket();
           return;
         }
       }
@@ -157,5 +176,26 @@ export default {
 }
 .result {
   margin-top: 20px;
+}
+
+.ticket {
+  display: flex;
+}
+
+td {
+  display: inline-block;
+  padding: 20px;
+  border: solid 1px #ccc;
+  width: 20px;
+  height: 20px;
+  margin-right: 2px;
+}
+
+table {
+  padding-left: 20px;
+}
+
+table:first {
+  padding-left: 0px;
 }
 </style>
