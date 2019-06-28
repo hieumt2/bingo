@@ -32,10 +32,13 @@
     <div class="result" v-if="tickets.length > 0">
       <div>
         <span>Result:</span>
-        <span v-for="(result, index) in results" :key="index + 200">{{ result }}</span>
+        <span class="result" v-for="(result, index) in results" :key="index + 200">{{ result }}</span>
       </div>
       <div>
         <input v-model="currentResultInput" v-on:keyup="handleResultInput">
+      </div>
+      <div>
+        <button v-on:click="clearResults">Clear result</button>
       </div>
     </div>
   </div>
@@ -58,9 +61,8 @@ export default {
       this.tickets.push([]);
       this.activeTicket = this.tickets.length - 1;
       this.$nextTick(() => {
-         this.$refs['inputNumber'].focus();
+        this.$refs["inputNumber"].focus();
       });
-     
     },
     choseTicket(index) {
       this.activeTicket = index;
@@ -160,6 +162,18 @@ export default {
         this.results.push(parseInt(this.currentResultInput));
         this.currentResultInput = "";
       }
+    },
+    clearResults() {
+      this.results = [];
+      for (let i = 0; i < this.tickets.length; i++) {
+        for (let j = 0; j < this.tickets[i].length; j++) {
+          for (let k = 0; k < this.tickets[i][j].length; k++) {
+            const refIndex = i.toString() + j.toString() + k.toString();
+            const ref = this.$refs[refIndex][0];
+            ref.style.backgroundColor = "";
+          }
+        }
+      }
     }
   }
 };
@@ -197,5 +211,9 @@ table {
 
 table:first {
   padding-left: 0px;
+}
+
+.result {
+  margin: 2px;
 }
 </style>
