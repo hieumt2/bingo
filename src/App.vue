@@ -17,7 +17,7 @@
           v-model="currentInput"
           :ref="'inputNumber'"
           v-on:keyup="handleInputNumber"
-        >
+        />
       </div>
     </div>
     <div class="tickets">
@@ -35,7 +35,7 @@
                 class="inlineEdit"
                 v-bind:data-id="index+':'+rowIndex+':'+dataIndex"
                 v-on:keyup="handleEditNumber"
-              >
+              />
             </td>
           </tr>
         </table>
@@ -47,7 +47,7 @@
         <span class="result" v-for="(result, index) in results" :key="index + 200">{{ result }}</span>
       </div>
       <div>
-        <input v-model="currentResultInput" v-on:keyup="handleResultInput">
+        <input v-model="currentResultInput" v-on:keyup="handleResultInput" />
       </div>
       <div>
         <button v-on:click="clearResults">Clear result</button>
@@ -263,7 +263,8 @@ td {
 }
 
 table {
-  padding-left: 20px;
+  margin-left: 20px;
+  border: 2px solid #e67e22;
 }
 
 table:first {
